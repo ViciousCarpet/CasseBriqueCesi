@@ -6,6 +6,7 @@ import com.ksoudier.cassebrique.Model.Bonus;
 import com.ksoudier.cassebrique.Model.Brique;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -18,10 +19,9 @@ public class CasseBrique extends Canvas{
     public static ArrayList<Balle> lesBalles= new ArrayList<>();
     public static ArrayList<Bonus> lesBonus = new ArrayList<>();
     public static ArrayList<Brique> lesBriques = new ArrayList<>();
+    public static ArrayList<Balle> ballesAAjouter= new ArrayList<>();
+    public static ArrayList<Balle> ballesARetirer= new ArrayList<>();
     public CasseBrique() throws InterruptedException {
-
-
-
         JFrame fenetre = new JFrame("Casse brique");
         //On récupère le panneau de la fenetre principale
         JPanel panneau = (JPanel) fenetre.getContentPane();
@@ -102,12 +102,17 @@ public class CasseBrique extends Canvas{
             Graphics2D dessin = (Graphics2D) getBufferStrategy().getDrawGraphics();
             dessin.setColor(Color.white);
             dessin.fillRect(0,0, LARGEUR, LONGUEUR);
+            this.PerteDeBalle();
             for (Balle uneBalle:lesBalles) {
                 uneBalle.dessiner(dessin);
                 uneBalle.mouvement();
                 uneBalle.collision();
-                this.collisionBonus(uneBalle,lesBonus);
+                this.collisionBonus(uneBalle,lesBonus); // ajouter nouveau tableau de balles pour eviter un bug ici
             }
+            for (Balle uneBalle:ballesAAjouter){
+                lesBalles.add(uneBalle);
+            }
+            ballesAAjouter.clear();
             for (Brique uneBrique: lesBriques){
                 uneBrique.dessiner(dessin);
             }
@@ -120,7 +125,7 @@ public class CasseBrique extends Canvas{
 
             dessin.dispose();
             getBufferStrategy().show();
-            Thread.sleep(1000 / 60);
+            Thread.sleep(1000 / 120);
         }
     }
     public void collisionBalleBrique(){
@@ -136,6 +141,7 @@ public class CasseBrique extends Canvas{
                         uneBrique.setVie(uneBrique.getVie()-1);
                         uneBalle.setVitesseVerticaleBalle(uneBalle.getVitesseVerticaleBalle()*-1);
                         if(uneBrique.getVie()==0){
+                            uneBrique.setPositionX(3200);
                             uneBrique.setCouleur(Color.white);
                         }
                     }
@@ -150,6 +156,7 @@ public class CasseBrique extends Canvas{
                         uneBrique.setVie(uneBrique.getVie()-1);
                         uneBalle.setVitesseHorizontaleBalle(uneBalle.getVitesseHorizontaleBalle()*-1);
                         if(uneBrique.getVie()==0){
+                            uneBrique.setPositionX(3200);
                             uneBrique.setCouleur(Color.white);
                         }
                     }
@@ -163,6 +170,7 @@ public class CasseBrique extends Canvas{
                         uneBrique.setVie(uneBrique.getVie()-1);
                         uneBalle.setVitesseHorizontaleBalle(uneBalle.getVitesseHorizontaleBalle()*-1);
                         if(uneBrique.getVie()==0){
+                            uneBrique.setPositionX(3200);
                             uneBrique.setCouleur(Color.white);
                         }
                     }
@@ -173,25 +181,46 @@ public class CasseBrique extends Canvas{
     public void collisionBonus(Balle uneBalle, ArrayList<Bonus> lesBonus){
         for (Bonus unBonus:lesBonus) {
             //si une balle sur le plan horizontal touche un bonus sur le plan horizontal
-            if(uneBalle.getPositionX()>=unBonus.getPositionX()&&
-            (uneBalle.getPositionX()+uneBalle.getDiametre())<=(unBonus.getPositionX()+unBonus.getDiametre())){
-                if(uneBalle.getPositionY()>=unBonus.getPositionY()&&
-                (uneBalle.getPositionY()+uneBalle.getDiametre())<=(unBonus.getPositionY()+unBonus.getDiametre())){
-                    if(unBonus.getType()==Bonus.AGRANDIRBARRE){
-                    LABARRE.setLargeur(LABARRE.getLargeur()+20);
+            if (uneBalle.getPositionX() >= unBonus.getPositionX() &&
+                    (uneBalle.getPositionX() + uneBalle.getDiametre()) <= (unBonus.getPositionX() + unBonus.getDiametre())) {
+                if (uneBalle.getPositionY() >= unBonus.getPositionY() &&
+                        (uneBalle.getPositionY() + uneBalle.getDiametre()) <= (unBonus.getPositionY() + unBonus.getDiametre())) {
+                    if (unBonus.getType() == Bonus.AGRANDIRBARRE) {
+                        LABARRE.setLargeur(LABARRE.getLargeur() + 20);
+                        unBonus.setPositionX(3200);
+                    } else if (unBonus.getType() == Bonus.PLUSIEURSBALLES) {
+                        int positionX = LARGEUR / 2;
+                        int positionY = LONGUEUR - 50;
+                        int tailleBalle = 10;
+                        ballesAAjouter.add(new Balle(positionX, positionY, (int) (Math.random() * 4 - 2), (int) (Math.random() * 4 - 2), tailleBalle));
+                        unBonus.setPositionX(3200);
                     }
-                    else if (unBonus.getType()==Bonus.PLUSIEURSBALLES){
-                        int positionX= LARGEUR /2;
-                        int positionY= LONGUEUR -50;
-                        int tailleBalle=10;
-                        lesBalles.add(new Balle(positionX,positionY,(int)(Math.random()*4-2),(int)(Math.random()*4-2),tailleBalle));
                 }
-                }
-//
             }
         }
     }
-
+    public void PerteDeBalle(){
+        for (Balle uneBalle: lesBalles) {
+            System.out.println(uneBalle.getPositionY()+uneBalle.getDiametre());
+            if((uneBalle.getPositionY()+ uneBalle.getDiametre())>= LONGUEUR){
+                this.ballesARetirer.add(uneBalle);
+            }
+        }
+        for (Balle uneBalle : ballesARetirer) {
+            this.lesBalles.remove(uneBalle);
+        }
+        ballesARetirer.clear();
+        if(lesBalles.isEmpty())
+            if (GameOver()){
+                System.exit(200);
+            }
+    }
+    public boolean GameOver(){
+        JFrame fenetre = new JFrame("Game Over");
+        JOptionPane.showMessageDialog(fenetre,"GAME OVER");
+        fenetre.requestFocus();
+        return true;
+    }
     public static void main(String[] args) throws InterruptedException {
         new CasseBrique();
     }

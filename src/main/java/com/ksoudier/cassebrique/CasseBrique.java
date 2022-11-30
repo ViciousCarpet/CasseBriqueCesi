@@ -15,7 +15,8 @@ import java.util.ArrayList;
 public class CasseBrique extends Canvas{
     public final static int LARGEUR =500;
     public final static int LONGUEUR =600;
-    public static Barre LABARRE = new Barre(LARGEUR,(LARGEUR/2-20),LONGUEUR-20,10);
+    public static int FPS= 300;
+    public static Barre LABARRE = new Barre(75,(LARGEUR/2-40),LONGUEUR-20,10);
     public static ArrayList<Balle> lesBalles= new ArrayList<>();
     public static ArrayList<Bonus> lesBonus = new ArrayList<>();
     public static ArrayList<Brique> lesBriques = new ArrayList<>();
@@ -86,7 +87,7 @@ public class CasseBrique extends Canvas{
             tailleBonus=(20);
             positionX= (int)(Math.random()*(LARGEUR -tailleBonus));
             positionY=(int)(Math.random()*((LONGUEUR -tailleBonus)));
-            int type= (int)(Math.random()*2+1);
+            int type= (int)(Math.random()*3+1);
             lesBonus.add(new Bonus(tailleBonus,positionX,positionY,type));
         }
         int BpositionX=LARGEUR-20;
@@ -129,7 +130,7 @@ public class CasseBrique extends Canvas{
 
             dessin.dispose();
             getBufferStrategy().show();
-            Thread.sleep(1000 / 300);
+            Thread.sleep(1000 / FPS);
         }
     }
     public void collisionBalleBrique(){

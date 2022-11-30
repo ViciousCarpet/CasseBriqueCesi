@@ -10,6 +10,8 @@ public class Bonus extends Rond {
     public static final Color COULEURPLUSIEURSBALLES=Color.green;
     public static final int AGRANDIRBARRE=2;
     private static final Color COULEURAGRANDIRBARRE=Color.cyan;
+    public static final int MODEIMPOSSIBLE=3;
+    private static final Color COULEURMODEIMPOSSIBLE= Color.red;
 
     public Bonus(int diametre, int positionX, int positionY, int type) {
         super(diametre, positionX, positionY);
@@ -17,6 +19,7 @@ public class Bonus extends Rond {
         switch (type){
             case PLUSIEURSBALLES -> this.couleur=COULEURPLUSIEURSBALLES;
             case AGRANDIRBARRE -> this.couleur=COULEURAGRANDIRBARRE;
+            case MODEIMPOSSIBLE -> this.couleur=COULEURMODEIMPOSSIBLE;
         }
     }
     //Collision haut de la balle, bas du bonus
@@ -75,6 +78,10 @@ public class Bonus extends Rond {
             int tailleBalle = 10;
             ballesAAjouter.add(new Balle(positionX, positionY, (int) (Math.random() * 4 - 2), (int) (Math.random() * 4 - 2), tailleBalle));
             bonusARetirer.add(this);
+        }
+        else if(this.getType()== Bonus.MODEIMPOSSIBLE){
+            FPS=1000;
+            LABARRE.setLargeur(20);
         }
     }
     @Override

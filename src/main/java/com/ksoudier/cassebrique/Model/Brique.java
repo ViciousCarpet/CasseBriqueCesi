@@ -9,7 +9,7 @@ public class Brique extends Rectangle{
     protected int type;
     public static final int BRIQUEBASIQUE=1;
     public static final int BRIQUEAMELIOREE=3;
-    public static final int BRIQUEDURE=10;
+    public static final int BRIQUEDURE=5;
     protected int alpha=255;
 
     public Brique(int largeur, int positionX, int positionY, int hauteur, int vie, int type) {
@@ -17,9 +17,9 @@ public class Brique extends Rectangle{
         this.vie = vie;
         this.type=type;
         switch (type){
-            case BRIQUEBASIQUE -> this.couleur= new Color(255, 166, 51, alpha);
-            case BRIQUEAMELIOREE -> this.couleur=new Color(94, 255, 94, alpha);
-            case BRIQUEDURE -> this.couleur=new Color(133, 0, 0,alpha);
+            case BRIQUEBASIQUE -> this.couleur= new Color(194, 255, 177, alpha);
+            case BRIQUEAMELIOREE -> this.couleur=new Color(241, 255, 81, alpha);
+            case BRIQUEDURE -> this.couleur=new Color(255, 37, 37, alpha);
         }
     }
     public boolean collisionHautBas(Balle uneBalle){

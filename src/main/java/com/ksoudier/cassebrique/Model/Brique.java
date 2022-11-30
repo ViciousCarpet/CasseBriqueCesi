@@ -95,13 +95,6 @@ public class Brique extends Rectangle{
         this.couleur= new Color(this.couleur.getRed(),this.couleur.getGreen(),this.couleur.getBlue(),
                 transparence);
         this.vie-=1;
-//        switch(this.type){
-//            case BRIQUEAMELIOREE -> this.couleur= new Color(this.couleur.getRed(),this.couleur.getGreen(),this.couleur.getBlue(),
-//                    (int)(this.couleur.getAlpha())-85);
-//            case BRIQUEDURE -> this.couleur=new Color(this.couleur.getRed(),this.couleur.getGreen(),this.couleur.getBlue(),
-//                    (int)(this.couleur.getAlpha())-25);
-//        }
-//        System.out.println(this.couleur.getAlpha());
         if(this.getVie()==0){
             briquesARetirer.add(this);
         }

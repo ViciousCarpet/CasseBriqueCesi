@@ -88,7 +88,7 @@ public class Brique extends Rectangle{
     }
 
     public void setVie() {
-        int transparence= (int)(this.couleur.getAlpha())-((int)(255/this.vie)+1);
+        int transparence= (int)(this.couleur.getAlpha())-((int)(255/(this.vie+3)+1));
         if(transparence<0){
             transparence=0;
         }

@@ -13,6 +13,8 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class CasseBrique extends Canvas{
+    public boolean statusPartie=true;//false arrété true jeu en cours
+    public boolean recommencer=false;//false si non true si souhait de refaire une partie
     public final static int LARGEUR =500;
     public final static int LONGUEUR =600;
     public static int FPS= 300;
@@ -25,6 +27,7 @@ public class CasseBrique extends Canvas{
     public static ArrayList<Brique> briquesARetirer= new ArrayList<>();
     public static ArrayList<Bonus> bonusARetirer= new ArrayList<>();
     public CasseBrique() throws InterruptedException {
+        recommencer=false;
         JFrame fenetre = new JFrame("Casse brique");
         //On récupère le panneau de la fenetre principale
         JPanel panneau = (JPanel) fenetre.getContentPane();
@@ -67,8 +70,9 @@ public class CasseBrique extends Canvas{
         createBufferStrategy(2);
         setIgnoreRepaint(true);
         this.setFocusable(false);
-
         demarrer();
+        fenetre.dispose();
+        return;
     }
 
     public void demarrer() throws InterruptedException {
@@ -106,7 +110,7 @@ public class CasseBrique extends Canvas{
             }
         }
 
-        while(true) {
+        while(statusPartie) {
             Graphics2D dessin = (Graphics2D) getBufferStrategy().getDrawGraphics();
             dessin.setColor(Color.white);
             dessin.fillRect(0,0, LARGEUR, LONGUEUR);
@@ -131,6 +135,14 @@ public class CasseBrique extends Canvas{
             dessin.dispose();
             getBufferStrategy().show();
             Thread.sleep(1000 / FPS);
+            if(!statusPartie){
+                break;
+            }
+            if(recommencer){
+                FPS= 300;
+                LABARRE = new Barre(75,(LARGEUR/2-40),LONGUEUR-20,10);
+                return;
+            }
         }
     }
     public void collisionBalleBrique(){
@@ -159,7 +171,12 @@ public class CasseBrique extends Canvas{
         enleverBrique();
         if(lesBriques.isEmpty()){
             GameOver("BRAVO VOUS AVEZ GAGNÉ");
-            System.exit(200);
+            if(!statusPartie){
+                System.exit(200);
+            }
+            else{
+                this.recommencerUnePartie();
+            }
         }
     }
     public void collisionBonus(Balle uneBalle, ArrayList<Bonus> lesBonus){
@@ -195,10 +212,22 @@ public class CasseBrique extends Canvas{
             this.lesBalles.remove(uneBalle);
         }
         ballesARetirer.clear();
-        if(lesBalles.isEmpty())
-            if (GameOver("GAME OVER")){
-                System.exit(200);
-            }
+        if(lesBalles.isEmpty()) {
+            GameOver("GAME OVER");
+            this.recommencerUnePartie();
+        }
+    }
+    public boolean recommencerUnePartie(){
+        lesBonus.clear();
+        lesBalles.clear();
+        lesBriques.clear();
+        if(!statusPartie){
+            System.exit(200);
+            return false;
+        }
+        else{
+            return true;
+        }
     }
     public void enleverBrique(){
         for (Brique uneBrique:briquesARetirer) {
@@ -220,14 +249,23 @@ public class CasseBrique extends Canvas{
         }
         enleverBalle();
     }
-    public boolean GameOver(String message){
-        JFrame fenetre = new JFrame(message);
-        JOptionPane.showMessageDialog(fenetre,message);
-        fenetre.requestFocus();
-        return true;
+    public void GameOver(String message){
+        if(!recommencer){
+            JFrame fenetre = new JFrame(message);
+            if(JOptionPane.showConfirmDialog(null,message+"\nSouhaitez vous refaire une partie ?",
+                    "GAME OVER", JOptionPane.YES_NO_OPTION)==0) {
+                statusPartie=true;
+                recommencer=true;
+            }
+            else{
+                statusPartie=false;
+            }
+        }
     }
     public static void main(String[] args) throws InterruptedException {
-        new CasseBrique();
+        while(true){
+            new CasseBrique();
+        }
     }
 
 }

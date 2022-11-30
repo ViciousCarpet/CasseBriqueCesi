@@ -80,7 +80,7 @@ public class Bonus extends Rond {
             bonusARetirer.add(this);
         }
         else if(this.getType()== Bonus.MODEIMPOSSIBLE){
-            FPS=1000;
+            FPS=3000;
             LABARRE.setLargeur(20);
             bonusARetirer.add(this);
         }

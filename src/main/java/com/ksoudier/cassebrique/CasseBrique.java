@@ -6,7 +6,6 @@ import com.ksoudier.cassebrique.Model.Bonus;
 import com.ksoudier.cassebrique.Model.Brique;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 
 public class CasseBrique extends Canvas{
     public boolean statusPartie=true;//false arrété true jeu en cours
-    public boolean recommencer=false;//false si non true si souhait de refaire une partie
+    public boolean recommencer;//false si non true si souhait de refaire une partie
     public final static int LARGEUR =500;
     public final static int LONGUEUR =600;
     public static int FPS= 300;
@@ -91,8 +90,14 @@ public class CasseBrique extends Canvas{
             tailleBonus=(20);
             positionX= (int)(Math.random()*(LARGEUR -tailleBonus));
             positionY=(int)(Math.random()*((LONGUEUR -tailleBonus)));
-            int type= (int)(Math.random()*3+1);
-            lesBonus.add(new Bonus(tailleBonus,positionX,positionY,type));
+            if(i==0){
+                lesBonus.add(new Bonus(tailleBonus,positionX,positionY,3));
+            }
+            else{
+                int type= (int)(Math.random()*2+1);
+                lesBonus.add(new Bonus(tailleBonus,positionX,positionY,type));
+            }
+
         }
         int BpositionX=LARGEUR-20;
         int BpositionY=0;
